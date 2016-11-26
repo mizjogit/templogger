@@ -1,18 +1,23 @@
 import dht
 import machine
 import time
-import urequests
+import socket
 from machine import I2C, Pin
 
-url = 'http://vps.mizjo.com:8011'
-headers = {'content-type': 'application/json'}
 sensor = dht.DHT22(Pin(2))
+
 time.sleep(5)
+
+addr=socket.getaddrinfo("vps.mizjo.com",8011)[0][-1]
+s=socket.socket()
+s.connect(addr)
 
 while True:
 	sensor.measure()
 	temp='%d.1' % (sensor.temperature())
 	hum='%d.1' % (sensor.humidity())
 	data = '{"Temp": '+temp+'}'
-	urequests.post(url, data=data, headers=headers)
+	print(data)
+	print(s.send(data))
 	time.sleep(5)
+	
