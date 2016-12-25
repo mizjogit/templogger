@@ -11,11 +11,12 @@ sensor = dht.DHT22(Pin(2))
 ##########################################################
 SSID = 'yai'
 PASSWORD = 'schumacher14'
-INTERVAL=30000
+INTERVAL=60000
 ##########################################################
+
 #i2c = I2C(Pin(5), Pin(4))
 #display = ssd1306.SSD1306_I2C(64, 48, i2c)
-led = Pin(2, Pin.OUT)
+#led = Pin(2, Pin.OUT)
 rtc = machine.RTC()
 rtc.irq(trigger=rtc.ALARM0, wake=machine.DEEPSLEEP)
 if machine.reset_cause() == machine.DEEPSLEEP_RESET:
@@ -32,7 +33,7 @@ if not sta_if.isconnected():
         pass
 print('Network configuration:', sta_if.ifconfig())
 
-mac=ubinascii.hexlify(sta_if.config('mac'),':').decode()
+mac=ubinascii.hexlify(sta_if.config('mac'),'-').decode()
 
 while True:
 	addr=socket.getaddrinfo("vps.mizjo.com",8011)[0][-1]
@@ -41,8 +42,8 @@ while True:
 		s.connect(addr)
 	except OSError:
 		print('Connect Exception, rebooting!')
-		led.low()
-		time.sleep(5)
+		#led.low()
+		#time.sleep(5)
 		machine.reset()
 
 	print('Socket Open to vps.mizjo.com')
@@ -57,6 +58,7 @@ while True:
 	#display.text("H:"+hum,1,20)
 	#display.show()
 	data= 'MAC='+mac+',Temp='+temp+',Humidity='+hum+'\r\n'
+	#data= 'Temp='+temp+',Humidity='+hum+',MAC='+mac+'\r\n'
 	print(data)
 	s.send(data)
 	print('Going into deep sleep!')
